@@ -156,7 +156,15 @@ func structToMap(s reflect.Value, clusterSupportsFloat bool) map[string]interfac
 			binMap = make(map[string]interface{}, numFields)
 		}
 
-		binMap[alias] = binValue
+		m, ok := binValue.(map[string]interface{})
+		if !ok || !typeOfT.Field(i).Anonymous {
+			binMap[alias] = binValue
+			continue
+		}
+
+		for k, v := range m {
+			binMap[k] = v
+		}
 	}
 
 	return binMap
